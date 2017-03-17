@@ -32,17 +32,17 @@ public class Main {
 		props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,"localhost:9092");
 		props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,StringSerializer.class.getName());
 		props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,StringSerializer.class.getName());
-
+	
 		Producer<String, String> producer = new KafkaProducer
 				<String, String>(props);
-
+		
 		try {
 			String topic=topicName;
 			String key = "mykey";
 			String value = "myvalue";
 			ProducerRecord<String,String> producerRecord = new ProducerRecord<String,String>(topic, key, value);
 			producer.send(producerRecord);
-
+		
 			System.out.println("Message sent successfully");
 			producer.close();
 		}catch(Exception ex) { 
