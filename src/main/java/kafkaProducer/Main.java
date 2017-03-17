@@ -12,7 +12,10 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 //import ProducerRecord packages
 import org.apache.kafka.clients.producer.ProducerRecord;
 
-//Create java class named “SimpleProducer”
+
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.StringSerializer;
+
 public class Main {
 	public static void main(String[] args) throws Exception{
 
@@ -26,22 +29,25 @@ public class Main {
 		String topicName = args[0].toString();
 
 		Properties props = new Properties();
-		props.put("bootstrap.servers", "localhost:4242");
-		props.put("acks", "all");
-		props.put("retries", 0);
-		props.put("batch.size", 16384);
-		props.put("linger.ms", 1);
-		props.put("buffer.memory", 33554432);
-		props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-		props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-
+		props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,"localhost:9092");
+		props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,StringSerializer.class.getName());
+		props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,StringSerializer.class.getName());
+	
 		Producer<String, String> producer = new KafkaProducer
 				<String, String>(props);
-
-		for(int i = 0; i < 10; i++)
-			producer.send(new ProducerRecord<String, String>(topicName, 
-					Integer.toString(i), Integer.toString(i)));
-		System.out.println("Message sent successfully");
-		producer.close();
+		
+		try {
+			String topic=topicName;
+			String key = "mykey";
+			String value = "myvalue";
+			ProducerRecord<String,String> producerRecord = new ProducerRecord<String,String>(topic, key, value);
+			producer.send(producerRecord);
+		
+			System.out.println("Message sent successfully");
+			producer.close();
+		}catch(Exception ex) { 
+			ex.printStackTrace();
+		}
 	}
+
 }
